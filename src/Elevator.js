@@ -1,7 +1,7 @@
 class Elevator {
   constructor () {
     this._motionState = false
-    this._motionTime = 5000   //ms
+    this._motionTime = 1000   //ms
     this._floor = 1
   }
 
@@ -38,17 +38,35 @@ class Elevator {
    * @param {Number} floor
    * */
   _moveToFloor (floor) {
-    this._floor = floor
+    if (this._floor < floor) {
+      // this._updateMotionDirection('up')
+      // this._updateMotionState(true)
+
+      setTimeout(() => {
+        this._floor++
+        this._moveToFloor(floor)
+      }, this._motionTime)
+    } else if (this._floor > floor) {
+      // this._updateMotionDirection('down')
+      // this._updateMotionState(true)
+
+      setTimeout(() => {
+        this._floor--
+        this._moveToFloor(floor)
+      }, this._motionTime)
+    } else if (this._floor === floor) {
+      // this._updateMotionState(false)
+    }
   }
 
   /**
    * Обновляет состояние лифта
    *
-   * @param {Number} motionState
+   * @param {Boolean} motionState
    * */
-  // _updateMotionState (motionState) {
-  //   this._motionState = motionState
-  // }
+  _updateMotionState (motionState) {
+    this._motionState = motionState
+  }
 }
 
 export default Elevator
