@@ -1,8 +1,13 @@
 class Elevator {
-  constructor () {
-    this._motionState = false
-    this._motionTime = 1000   //ms
-    this._floor = 1
+  constructor (
+    motionState = false,
+    motionTime = 1000,
+    initialFloor = 1,
+  ) {
+    this._motionState = motionState
+    this._motionTime = motionTime
+    this._floor = initialFloor
+    this._motionDirection = ''
   }
 
   /**
@@ -24,6 +29,15 @@ class Elevator {
   }
 
   /**
+   * Возвращает направление движения лифта
+   *
+   * @return {String} direction
+   * */
+  getMotionDirection () {
+    return this._motionDirection
+  }
+
+  /**
    * Обрабатывает выбор этажа пользователем
    *
    * @param {Number} floor
@@ -39,23 +53,25 @@ class Elevator {
    * */
   _moveToFloor (floor) {
     if (this._floor < floor) {
-      // this._updateMotionDirection('up')
-      // this._updateMotionState(true)
+      this._updateMotionDirection('up')
+      this._updateMotionState(true)
 
       setTimeout(() => {
         this._floor++
         this._moveToFloor(floor)
       }, this._motionTime)
     } else if (this._floor > floor) {
-      // this._updateMotionDirection('down')
-      // this._updateMotionState(true)
+      this._updateMotionDirection('down')
+      this._updateMotionState(true)
 
       setTimeout(() => {
         this._floor--
         this._moveToFloor(floor)
       }, this._motionTime)
     } else if (this._floor === floor) {
-      // this._updateMotionState(false)
+      this._updateMotionDirection('')
+      this._updateMotionState(false)
+      // оповещать что пользователь на нужном этаже
     }
   }
 
@@ -66,6 +82,15 @@ class Elevator {
    * */
   _updateMotionState (motionState) {
     this._motionState = motionState
+  }
+
+  /**
+   * Обновляет направление движения лифта
+   *
+   * @param {String} motionDirection
+   * */
+  _updateMotionDirection (motionDirection) {
+    this._motionDirection = motionDirection
   }
 }
 

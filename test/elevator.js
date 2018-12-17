@@ -18,26 +18,50 @@ describe('Elevator', function () {
     expect(state).to.deep.equal(initialElevatorMotionState)
   })
 
+  it('Должен вернуть состояние лифта после выбора пользователя - двигается', () => {
+    const floor = elevator.getFloor()
+    elevator.acceptUserSelect(floor + 1)
+    const motionState = elevator.getMotionState()
+
+    expect(motionState).to.deep.equal(true)
+  })
+
   it('Должен вернуть начальное положение лифта - 1 этаж', () => {
     const floor = elevator.getFloor()
 
     expect(floor).to.deep.equal(initialElevatorFloor)
   })
 
-  it('Должен переместить лифт на n этажей, ' +
-    'за время большее или равное времени перемещения на n этажей', (done) => {
-    // тест должен упасть..
+  it('Должен вернуть направление движение лифта после выбора пользователя - вниз', () => {
     const floor = elevator.getFloor()
-    elevator.acceptUserSelect(floor + nFloor)
-    const floorBeforeEndMotion = elevator.getFloor()
-    let countFloor = 1
+    elevator.acceptUserSelect(floor - 1)
+    const motionDirection = elevator.getMotionDirection()
 
-    setInterval(() => {
-      const newFloor = elevator.getFloor()
-      // надо проверять не этаж а время..
-      expect(floorBeforeEndMotion + countFloor).to.deep.equal(newFloor)
-      countFloor++
-      //done()
-    }, motionTime)
+    expect(motionDirection).to.deep.equal('down')
   })
+
+  it('Должен вернуть направление движение лифта после выбора пользователя - вверх', () => {
+    const floor = elevator.getFloor()
+    elevator.acceptUserSelect(floor + 1)
+    const motionDirection = elevator.getMotionDirection()
+
+    expect(motionDirection).to.deep.equal('up')
+  })
+
+  // it('Должен переместить лифт на n этажей, ' +
+  //   'за время большее или равное времени перемещения на n этажей', (done) => {
+  //   // тест должен упасть..
+  //   const floor = elevator.getFloor()
+  //   elevator.acceptUserSelect(floor + nFloor)
+  //   const floorBeforeEndMotion = elevator.getFloor()
+  //   let countFloor = 1
+  //
+  //   setInterval(() => {
+  //     const newFloor = elevator.getFloor()
+  //     // надо проверять не этаж а время..
+  //     expect(floorBeforeEndMotion + countFloor).to.deep.equal(newFloor)
+  //     countFloor++
+  //     done()
+  //   }, motionTime)
+  // })
 })
