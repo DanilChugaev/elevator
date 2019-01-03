@@ -74,6 +74,16 @@ describe('Elevator', function () {
   })
 
   describe('Список выбранных этажей', () => {
+    it('Возвращает список всех доступных этажей для лифта', () => {
+      const checkListOfAvailableFloors = []
+      for (let i = minFloor; i <= maxFloor; i++) {
+        checkListOfAvailableFloors.push(i)
+      }
+      const listOfAvailableFloors = elevator.getListOfAvailableFloors()
+
+      expect(listOfAvailableFloors).to.deep.equal(checkListOfAvailableFloors)
+    })
+
     it('Должен добавить выбранный этаж в список выбранных этажей', () => {
       const selectedFloor = 5
       elevator.acceptUserSelect(selectedFloor)

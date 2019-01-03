@@ -12,7 +12,10 @@ class Elevator {
     this._maxFloor = maxFloor
     this._minFloor = minFloor
     this._listOfSelectedFloors = []
+    this._listOfAvailableFloors = []
     this._motionDirection = ''
+
+    this._setAvailableFloors()
   }
 
   /**
@@ -52,6 +55,15 @@ class Elevator {
   }
 
   /**
+   * Возвращает список всех доступных этажей для лифта
+   *
+   * @return {Array} listOfAvailableFloors
+   * */
+  getListOfAvailableFloors () {
+    return this._listOfAvailableFloors
+  }
+
+  /**
    * Обрабатывает выбор этажа пользователем
    *
    * @param {Number} floor
@@ -66,6 +78,17 @@ class Elevator {
     // последовательно по списку выбранных этажей
     // в одном направлении за текущий момент
     this._moveToFloor(floor)
+  }
+
+  /**
+   * Устанавливает все доступные для перемещения этажи
+   * */
+  _setAvailableFloors () {
+    // в дальнейшем можно добавить, чтобы устанавливались
+    // этажи, кроме переданных в этот метод
+    for (let i = this._minFloor; i <= this._maxFloor; i++) {
+      this._listOfAvailableFloors.push(i)
+    }
   }
 
   /**
@@ -136,6 +159,11 @@ class Elevator {
     }
   }
 
+  /**
+   * Удаляет этаж из списка выбранных этажей для перемещения
+   *
+   * @param {Number} floor
+   * */
   _removeFloorFromListOfSelectedFloors (floor) {
     const index = this._listOfSelectedFloors.indexOf(floor);
 
