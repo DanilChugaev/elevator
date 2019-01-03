@@ -131,4 +131,12 @@ describe('Elevator', function () {
       expect(listOfSelectedFloors.includes(newMaxFloor)).to.deep.equal(false)
     })
   })
+
+  describe('Двери лифта', () => {
+    it('Возвращает начальное состояние дверей лифта - закрыты', function () {
+      const doorState = elevator.getDoorState()
+
+      expect(doorState).to.deep.equal(false)
+    })
+  })
 })

@@ -5,15 +5,17 @@ class Elevator {
                  initialFloor = 1,
                  maxFloor = 5,
                  minFloor = 1,
+                 doorState = false,
                } = {}) {
     this._motionState = motionState
     this._motionTime = motionTime
+    this._motionDirection = ''
     this._floor = initialFloor
     this._maxFloor = maxFloor
     this._minFloor = minFloor
     this._listOfSelectedFloors = []
     this._listOfAvailableFloors = []
-    this._motionDirection = ''
+    this._doorState = doorState
 
     this._setAvailableFloors()
   }
@@ -64,6 +66,15 @@ class Elevator {
   }
 
   /**
+   * Возвращает состояние дверей лифта
+   *
+   * @return {Boolean} doorState
+   * */
+  getDoorState () {
+    return this._doorState
+  }
+
+  /**
    * Обрабатывает выбор этажа пользователем
    *
    * @param {Number} floor
@@ -77,6 +88,9 @@ class Elevator {
     // перемещение лифта должно происходить
     // последовательно по списку выбранных этажей
     // в одном направлении за текущий момент
+
+    // перемещение лифта должно начинаться после того,
+    // как двери лифта закроются
     this._moveToFloor(floor)
   }
 
