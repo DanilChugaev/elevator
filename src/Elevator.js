@@ -6,6 +6,8 @@ class Elevator {
                  maxFloor = 5,
                  minFloor = 1,
                  doorState = false,
+                 doorOpenStateTime = 5000,
+                 doorMotionTime = 1000,
                } = {}) {
     this._motionState = motionState
     this._motionTime = motionTime
@@ -16,6 +18,9 @@ class Elevator {
     this._listOfSelectedFloors = []
     this._listOfAvailableFloors = []
     this._doorState = doorState
+    this._doorOpenStateTime = doorOpenStateTime
+    this._doorMotionTime = doorMotionTime
+    this._doorMotionDirection = ''
 
     this._setAvailableFloors()
   }
@@ -82,6 +87,7 @@ class Elevator {
   acceptUserSelect (floor) {
     this._addFloorToListOfSelectedFloors(floor)
 
+    this._updateDoorState(false)
     // перемещении лифта может происходить
     // параллельно добавлению этажей
 
@@ -91,7 +97,6 @@ class Elevator {
 
     // перемещение лифта должно начинаться после того,
     // как двери лифта закроются
-    this._moveToFloor(floor)
   }
 
   /**
@@ -106,41 +111,32 @@ class Elevator {
   }
 
   /**
-   * Перемещает лифт на указанный этаж
-   *
-   * @param {Number} floor
+   * Перемещает лифт на следующий этаж
    * */
-  _moveToFloor (floor) {
+  _moveToFloor () {
+    const floor = this._listOfSelectedFloors[0]
+
     if (this._floor < floor) {
       this._updateMotionDirection('up')
-      this._updateMotionState(true)
-
-      setTimeout(() => {
-        // тут выбранный этаж удалять из списка
-        // this._removeFloorFromListOfSelectedFloors(floor)
-        this._floor++
-
-        // необходимо перемещать лифт на следующий этаж по списку
-        this._moveToFloor(floor)
-      }, this._motionTime)
     } else if (this._floor > floor) {
       this._updateMotionDirection('down')
-      this._updateMotionState(true)
-
-      setTimeout(() => {
-        // тут выбранный этаж удалять из списка
-        // this._removeFloorFromListOfSelectedFloors(floor)
-        this._floor--
-        this._moveToFloor(floor)
-      }, this._motionTime)
     } else if (this._floor === floor) {
       // направление лифта необходимо обнулять
       // только после достижения последнего лифта в списке
       // выбранных этажей по данному направлению
       this._updateMotionDirection('')
       this._updateMotionState(false)
-      // тут выбранный этаж удалять из списка
       // оповещать что пользователь на нужном этаже
+    }
+
+    if (this._floor !== floor) {
+      this._updateMotionState(true)
+
+      setTimeout(() => {
+        this._removeFloorFromListOfSelectedFloors(floor)
+
+        this._moveToFloor()
+      }, this._motionTime)
     }
   }
 
@@ -160,6 +156,38 @@ class Elevator {
    * */
   _updateMotionDirection (motionDirection) {
     this._motionDirection = motionDirection
+  }
+
+  /**
+   * Обновляет состояние дверей лифта
+   *
+   * @param {Boolean} doorState
+   * */
+  _updateDoorState (doorState) {
+    if (doorState) {
+      this._updateDoorMotionDirection('opening')
+    } else {
+      this._updateDoorMotionDirection('closing')
+    }
+
+    setTimeout(() => {
+      this._doorState = doorState
+
+      if (doorState) {
+        setTimeout(() => {
+          this._updateDoorState(false)
+        }, this._doorOpenStateTime)
+      } else {
+        this._moveToFloor()
+      }
+    }, this._doorMotionTime)
+  }
+
+  /**
+   * Обновляет направление движения дверей лифта
+   * */
+  _updateDoorMotionDirection (doorMotionDirection) {
+    this._doorMotionDirection = doorMotionDirection
   }
 
   /**

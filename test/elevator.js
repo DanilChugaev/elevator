@@ -1,58 +1,89 @@
 import {expect} from 'chai'
 import Elevator from '../src/Elevator'
 
-const initialElevatorMotionState = false
-const initialElevatorFloor = 1
+const motionState = false
+const initialFloor = 5
 const maxFloor = 10
 const minFloor = 1
-const motionTime = 1000
+const motionTime = 100
+const doorState = false
+const doorOpenStateTime = 500
+const doorMotionTime = 100
+
+const circleTimeDoor = doorMotionTime * 2 + doorOpenStateTime
 const nFloor = 3
 
 let elevator
 beforeEach(() => {
-  elevator = new Elevator({maxFloor, minFloor})
+  elevator = new Elevator({
+    motionState,
+    maxFloor,
+    minFloor,
+    initialFloor,
+    motionTime,
+    doorState,
+    doorOpenStateTime,
+    doorMotionTime,
+  })
 })
 
 describe('Elevator', function () {
-  this.timeout(motionTime * nFloor + 100);
+  // this.timeout(motionTime * nFloor + 100);
 
-  describe('Состояние лифта', () => {
+  describe('Состояние лифта', function () {
+    this.timeout(circleTimeDoor + 100);
+
     it('Должен вернуть начальное состояние лифта - не двигается', () => {
       const state = elevator.getMotionState()
 
-      expect(state).to.deep.equal(initialElevatorMotionState)
+      expect(state).to.deep.equal(motionState)
     })
 
-    it('Должен вернуть состояние лифта после выбора пользователя - двигается', () => {
+    it('Должен вернуть состояние лифта после выбора пользователя и закрытия дверей - двигается', (done) => {
       const floor = elevator.getFloor()
       elevator.acceptUserSelect(floor + 1)
-      const motionState = elevator.getMotionState()
 
-      expect(motionState).to.deep.equal(true)
+      setTimeout(() => {
+        const newMotionState = elevator.getMotionState()
+
+        expect(newMotionState).to.deep.equal(!motionState)
+        done()
+      }, circleTimeDoor)
     })
   })
 
-  describe('Движение лифта', () => {
-    it('Должен вернуть начальное положение лифта - 1 этаж', () => {
+  describe('Движение лифта', function () {
+    this.timeout(circleTimeDoor + 100);
+
+    it(`Должен вернуть начальное положение лифта - ${initialFloor} этаж`, () => {
       const floor = elevator.getFloor()
 
-      expect(floor).to.deep.equal(initialElevatorFloor)
+      expect(floor).to.deep.equal(initialFloor)
     })
 
-    it('Должен вернуть направление движение лифта после выбора пользователя - вниз', () => {
+    it('Должен вернуть направление движение лифта после выбора пользователя и закрытия дверей - вниз', (done) => {
       const floor = elevator.getFloor()
       elevator.acceptUserSelect(floor - 1)
-      const motionDirection = elevator.getMotionDirection()
 
-      expect(motionDirection).to.deep.equal('down')
+      setTimeout(() => {
+        const motionDirection = elevator.getMotionDirection()
+
+        expect(motionDirection).to.deep.equal('down')
+        done()
+      }, circleTimeDoor)
     })
 
-    it('Должен вернуть направление движение лифта после выбора пользователя - вверх', () => {
+    it('Должен вернуть направление движение лифта после выбора пользователя и закрытия дверей - вверх', (done) => {
+      // this.timeout(circleTimeDoor + 100);
       const floor = elevator.getFloor()
       elevator.acceptUserSelect(floor + 1)
-      const motionDirection = elevator.getMotionDirection()
 
-      expect(motionDirection).to.deep.equal('up')
+      setTimeout(() => {
+        const motionDirection = elevator.getMotionDirection()
+
+        expect(motionDirection).to.deep.equal('up')
+        done()
+      }, circleTimeDoor)
     })
 
     // it('Должен переместить лифт на n этажей, ' +
@@ -73,7 +104,7 @@ describe('Elevator', function () {
     // })
   })
 
-  describe('Список выбранных этажей', () => {
+  describe('Список выбранных этажей', function () {
     it('Возвращает список всех доступных этажей для лифта', () => {
       const checkListOfAvailableFloors = []
       for (let i = minFloor; i <= maxFloor; i++) {
@@ -132,11 +163,17 @@ describe('Elevator', function () {
     })
   })
 
-  describe('Двери лифта', () => {
+  describe('Двери лифта', function () {
     it('Возвращает начальное состояние дверей лифта - закрыты', function () {
-      const doorState = elevator.getDoorState()
+      const newDoorState = elevator.getDoorState()
 
-      expect(doorState).to.deep.equal(false)
+      expect(newDoorState).to.deep.equal(doorState)
+    })
+
+    it('Возвращает состояние дверей лифта после нажатия на кнопку открытия дверей - открывается', function () {
+      // const newDoorState = elevator.getDoorState()
+      //
+      // expect(newDoorState).to.deep.equal(doorState)
     })
   })
 })
