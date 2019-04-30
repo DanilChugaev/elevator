@@ -1,28 +1,30 @@
-class Elevator {
-  constructor ({
-                 motionState = false,
-                 motionTime = 1000,
-                 initialFloor = 1,
-                 maxFloor = 5,
-                 minFloor = 1,
-                 doorState = false,
-                 doorOpenStateTime = 5000,
-                 doorMotionTime = 1000,
-               } = {}) {
-    this._motionState = motionState
-    this._motionTime = motionTime
-    this._motionDirection = ''
-    this._floor = initialFloor
-    this._maxFloor = maxFloor
-    this._minFloor = minFloor
-    this._listOfSelectedFloors = []
-    this._listOfAvailableFloors = []
-    this._doorState = doorState
-    this._doorOpenStateTime = doorOpenStateTime
-    this._doorMotionTime = doorMotionTime
-    this._doorMotionDirection = ''
+import {helperCompareNumber} from './helpers'
 
-    this._setAvailableFloors()
+class Elevator {
+  constructor({
+    motionState = false,
+    motionTime = 1000,
+    initialFloor = 1,
+    maxFloor = 5,
+    minFloor = 1,
+    doorState = false,
+    doorOpenStateTime = 5000,
+    doorMotionTime = 1000,
+  } = {}) {
+    this._motionState = motionState;
+    this._motionTime = motionTime;
+    this._motionDirection = '';
+    this._floor = initialFloor;
+    this._maxFloor = maxFloor;
+    this._minFloor = minFloor;
+    this._listOfSelectedFloors = [];
+    this._listOfAvailableFloors = [];
+    this._doorState = doorState;
+    this._doorOpenStateTime = doorOpenStateTime;
+    this._doorMotionTime = doorMotionTime;
+    this._doorMotionDirection = '';
+
+    this._setAvailableFloors();
   }
 
   /**
@@ -30,8 +32,8 @@ class Elevator {
    *
    * @return {Number} floor
    * */
-  getFloor () {
-    return this._floor
+  getFloor() {
+    return this._floor;
   }
 
   /**
@@ -39,8 +41,8 @@ class Elevator {
    *
    * @return {Boolean} state
    * */
-  getMotionState () {
-    return this._motionState
+  getMotionState() {
+    return this._motionState;
   }
 
   /**
@@ -48,8 +50,8 @@ class Elevator {
    *
    * @return {String} direction
    * */
-  getMotionDirection () {
-    return this._motionDirection
+  getMotionDirection() {
+    return this._motionDirection;
   }
 
   /**
@@ -57,8 +59,8 @@ class Elevator {
    *
    * @return {Array} listOfSelectedFloors
    * */
-  getListOfSelectedFloors () {
-    return this._listOfSelectedFloors
+  getListOfSelectedFloors() {
+    return this._listOfSelectedFloors;
   }
 
   /**
@@ -66,8 +68,8 @@ class Elevator {
    *
    * @return {Array} listOfAvailableFloors
    * */
-  getListOfAvailableFloors () {
-    return this._listOfAvailableFloors
+  getListOfAvailableFloors() {
+    return this._listOfAvailableFloors;
   }
 
   /**
@@ -75,8 +77,8 @@ class Elevator {
    *
    * @return {Boolean} doorState
    * */
-  getDoorState () {
-    return this._doorState
+  getDoorState() {
+    return this._doorState;
   }
 
   /**
@@ -84,10 +86,10 @@ class Elevator {
    *
    * @param {Number} floor
    * */
-  acceptUserSelect (floor) {
-    this._addFloorToListOfSelectedFloors(floor)
+  acceptUserSelect(floor) {
+    this._addFloorToListOfSelectedFloors(floor);
 
-    this._updateDoorState(false)
+    this._updateDoorState(false);
     // перемещении лифта может происходить
     // параллельно добавлению этажей
 
@@ -102,41 +104,41 @@ class Elevator {
   /**
    * Устанавливает все доступные для перемещения этажи
    * */
-  _setAvailableFloors () {
+  _setAvailableFloors() {
     // в дальнейшем можно добавить, чтобы устанавливались
     // этажи, кроме переданных в этот метод
     for (let i = this._minFloor; i <= this._maxFloor; i++) {
-      this._listOfAvailableFloors.push(i)
+      this._listOfAvailableFloors.push(i);
     }
   }
 
   /**
    * Перемещает лифт на следующий этаж
    * */
-  _moveToFloor () {
-    const floor = this._listOfSelectedFloors[0]
+  _moveToNextFloor() {
+    const floor = this._listOfSelectedFloors[0];
 
     if (this._floor < floor) {
-      this._updateMotionDirection('up')
+      this._updateMotionDirection('up');
     } else if (this._floor > floor) {
-      this._updateMotionDirection('down')
+      this._updateMotionDirection('down');
     } else if (this._floor === floor) {
       // направление лифта необходимо обнулять
       // только после достижения последнего лифта в списке
       // выбранных этажей по данному направлению
-      this._updateMotionDirection('')
-      this._updateMotionState(false)
+      this._updateMotionDirection('');
+      this._updateMotionState(false);
       // оповещать что пользователь на нужном этаже
     }
 
     if (this._floor !== floor) {
-      this._updateMotionState(true)
+      this._updateMotionState(true);
 
       setTimeout(() => {
-        this._removeFloorFromListOfSelectedFloors(floor)
+        this._removeFloorFromListOfSelectedFloors(floor);
 
-        this._moveToFloor()
-      }, this._motionTime)
+        this._moveToNextFloor();
+      }, this._motionTime);
     }
   }
 
@@ -145,8 +147,8 @@ class Elevator {
    *
    * @param {Boolean} motionState
    * */
-  _updateMotionState (motionState) {
-    this._motionState = motionState
+  _updateMotionState(motionState) {
+    this._motionState = motionState;
   }
 
   /**
@@ -154,8 +156,8 @@ class Elevator {
    *
    * @param {String} motionDirection
    * */
-  _updateMotionDirection (motionDirection) {
-    this._motionDirection = motionDirection
+  _updateMotionDirection(motionDirection) {
+    this._motionDirection = motionDirection;
   }
 
   /**
@@ -163,31 +165,31 @@ class Elevator {
    *
    * @param {Boolean} doorState
    * */
-  _updateDoorState (doorState) {
-    if (doorState) {
-      this._updateDoorMotionDirection('opening')
-    } else {
-      this._updateDoorMotionDirection('closing')
-    }
+  _updateDoorState(doorState) {
+    const doorMotionDirection = doorState ? 'opening' : 'closing';
+
+    this._updateDoorMotionDirection(doorMotionDirection);
 
     setTimeout(() => {
-      this._doorState = doorState
+      this._doorState = doorState;
 
       if (doorState) {
         setTimeout(() => {
-          this._updateDoorState(false)
-        }, this._doorOpenStateTime)
+          this._updateDoorState(false);
+        }, this._doorOpenStateTime);
       } else {
-        this._moveToFloor()
+        this._moveToNextFloor();
       }
-    }, this._doorMotionTime)
+    }, this._doorMotionTime);
+
+
   }
 
   /**
    * Обновляет направление движения дверей лифта
    * */
-  _updateDoorMotionDirection (doorMotionDirection) {
-    this._doorMotionDirection = doorMotionDirection
+  _updateDoorMotionDirection(doorMotionDirection) {
+    this._doorMotionDirection = doorMotionDirection;
   }
 
   /**
@@ -195,9 +197,10 @@ class Elevator {
    *
    * @param {Number} floor
    * */
-  _addFloorToListOfSelectedFloors (floor) {
+  _addFloorToListOfSelectedFloors(floor) {
     if (this._checkFloorBeforeAddToList(floor)) {
-      this._listOfSelectedFloors.push(floor)
+      this._listOfSelectedFloors.push(floor);
+      this._listOfSelectedFloors.sort(helperCompareNumber);
     }
   }
 
@@ -206,7 +209,7 @@ class Elevator {
    *
    * @param {Number} floor
    * */
-  _removeFloorFromListOfSelectedFloors (floor) {
+  _removeFloorFromListOfSelectedFloors(floor) {
     const index = this._listOfSelectedFloors.indexOf(floor);
 
     if (index > -1) {
@@ -222,15 +225,17 @@ class Elevator {
    *
    * @return {Boolean} result
    * */
-  _checkFloorBeforeAddToList (floor) {
-    const contained = this._listOfSelectedFloors.includes(floor)
-    const lessOrEqualMaxFloor = floor <= this._maxFloor
-    const greaterOrEqualMinFloor = floor >= this._minFloor
+  _checkFloorBeforeAddToList(floor) {
+    const contained = this._listOfSelectedFloors.includes(floor);
+    const lessOrEqualMaxFloor = floor <= this._maxFloor;
+    const greaterOrEqualMinFloor = floor >= this._minFloor;
 
     return !contained
       && lessOrEqualMaxFloor
-      && greaterOrEqualMinFloor
+      && greaterOrEqualMinFloor;
   }
 }
 
-export default Elevator
+
+
+export default Elevator;
